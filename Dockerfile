@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:18.20.4-alpine AS builder
+FROM node:24-alpine AS builder
 
 # Set the working directory to /app
 WORKDIR /app
@@ -11,7 +11,7 @@ ARG APP_VERSION=0.1.0
 COPY package*.json ./
 
 # Install app dependencies
-RUN npm install --production
+RUN npm ci --omit=dev
 
 # Copy the rest of the app source code to the container
 COPY . .

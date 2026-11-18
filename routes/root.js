@@ -3,8 +3,13 @@
 module.exports = async function (fastify, opts) {
   fastify.post('/', async function (request, reply) {
     const msg = request.body
-    fastify.sendMessage(Buffer.from(JSON.stringify(msg)))
-    reply.code(201)
+    try {
+      await fastify.sendMessage(Buffer.from(JSON.stringify(msg)))
+    } catch (err) {
+      request.log.error({ err }, 'Order queue delivery failed')
+      return reply.code(503).send({ error: 'Order queue did not confirm delivery' })
+    }
+    return reply.code(201).send()
   })
 
   fastify.get('/health', async function (request, reply) {
